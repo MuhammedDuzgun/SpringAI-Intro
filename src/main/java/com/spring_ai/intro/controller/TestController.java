@@ -2,11 +2,10 @@ package com.spring_ai.intro.controller;
 
 import com.spring_ai.intro.output.MusicArtist;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/ai")
@@ -39,9 +38,18 @@ public class TestController {
     }
 
     @GetMapping("/music-artist")
-    public MusicArtist getSimilarArtist(@RequestBody String artist) {
+    public MusicArtist getSimilarArtist() {
         MusicArtist musicArtist = chatClient.prompt()
-                .user(artist)
+                .user("Pink Floyd")
+                .call()
+                .entity(MusicArtist.class);
+        return musicArtist;
+    }
+
+    @GetMapping("/music-artist-2")
+    public MusicArtist getSimilarArtist2(@RequestBody String userInput) {
+        MusicArtist musicArtist = chatClient.prompt()
+                .user(u->u.text("Bana {userInput} gibi sanatçıları json listesi olarak verebilir misin").param("userInput", userInput))
                 .call()
                 .entity(MusicArtist.class);
         return musicArtist;
